@@ -38,8 +38,8 @@ You can also make a cron job to run it at the time of your liking.
 
 ## Images
 
-![sysupdate1](/images/sysupdate1.jpg) "sysupdate1")
-![sysupdate2](/images/sysupdate2.jpg) "sysupdate2")
+![sysupdate1](/images/sysupdate1.jpg)
+![sysupdate2](/images/sysupdate2.jpg)
 
 ## Tested on
 
