@@ -38,8 +38,8 @@ You can also make a cron job to run it at the time of your liking.
 
 ## Images
 
-![Alt text](sysupdate1.jpg?raw=true "Title")
-![Alt text](sysupdate2.jpg?raw=true "Title")
+![sysupdate1](/images/sysupdate1.jpg) "sysupdate1")
+![sysupdate2](/images/sysupdate2.jpg) "sysupdate2")
 
 ## Tested on
 
