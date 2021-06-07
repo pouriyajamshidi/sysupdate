@@ -13,9 +13,9 @@ _If you don't like or not using snap, you can crop it out from this script_.
 For convenience, it is suggested to place this script in your OS's ```PATH``` as depicted below:
 
 ```bash
+curl -O https://raw.githubusercontent.com/pouriyajamshidi/sysupdate/master/sysupdate.sh
 chmod +x sysupdate.sh
-
-cp sysupdate.sh /usr/bin/sysupdate
+sudo cp sysupdate.sh /usr/bin/sysupdate
 ```
 
 And run it like:
@@ -24,7 +24,7 @@ And run it like:
 sudo sysupdate
 ```
 
-Or if you prefer to run it as it is:
+If you prefer to not place it in your system `PATH`:
 
 ```bash
 sudo sysupdate.sh
