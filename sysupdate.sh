@@ -25,7 +25,7 @@ function check_dpkg_deinstall() {
 }
 
 function check_distro() {
-    grep "^ID=" /etc/os-release | cut -d "=" -f 2
+    grep "^ID=" /etc/os-release | cut -d "=" -f 2 | sed -e 's\"\\g'
 }
 
 function update_RPM() {
