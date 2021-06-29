@@ -138,7 +138,7 @@ function main() {
 
     if [[ "$distro" == "debian" || "$distro" == "ubuntu" || "$distro" == "raspbian" ]]; then
         update_Debian
-    elif [[ "$distro" == "fedora" || "$distro" == "centos" || "Oracle" == *"$distro"* || "Red" == *"$distro"* ]]; then
+    elif [[ "$distro" == "fedora" || "$distro" == "centos" || "$distro" == "ol" || "$distro" == "rhel" ]]; then
         update_RPM
     elif [[ "Arch" == *"$distro"* ]]; then
         update_Arch
