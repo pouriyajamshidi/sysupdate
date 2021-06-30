@@ -150,7 +150,7 @@ function main() {
         update_Arch
     else
         echo "[❌] Operating system is not supported."
-        echo "If your OS is in supported OS list and see this error, 
+        echo "If your OS is in supported OS list and you see this error, 
         please file a bug report."
     fi
 }
