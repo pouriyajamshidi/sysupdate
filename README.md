@@ -40,7 +40,7 @@ You can also make a `cron` job to run it at the time of your liking.
 ![sysupdate1](/images/sysupdate1.png)
 ![sysupdate2](/images/sysupdate2.png)
 
-## Supported Operating Systems
+## Supported Operating Systems/Distros
 
 * Debian and its derivatives:
   * Ubuntu
