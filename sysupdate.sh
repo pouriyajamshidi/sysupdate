@@ -136,14 +136,22 @@ function main() {
     is_root
     distro=$(check_distro)
 
-    if [[ "$distro" == "debian" || "$distro" == "ubuntu" || "$distro" == "raspbian" ]]; then
+    if [[ "$distro" == "debian" || "$distro" == "ubuntu" || \
+        "$distro" == "linuxmint" || "$distro" == "raspbian" ]]; then
+
         update_Debian
-    elif [[ "$distro" == "fedora" || "$distro" == "centos" || "$distro" == "ol" || "$distro" == "rhel" ]]; then
+
+    elif [[ "$distro" == "fedora" || "$distro" == "centos" || \
+        "$distro" == "ol" || "$distro" == "rhel" ]]; then
+
         update_RPM
+
     elif [[ "Arch" == *"$distro"* ]]; then
         update_Arch
     else
-        echo "[❌] Operating system is not supported"
+        echo "[❌] Operating system is not supported."
+        echo "If your OS is in supported OS list and see this error, 
+        please file a bug report."
     fi
 }
 
