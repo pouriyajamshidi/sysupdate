@@ -104,6 +104,12 @@ function update_Debian() {
             print_chars "-"
         fi
 
+        if dpkg -s python3-pip >/dev/null 2>&1; then
+            echo "${green}✅ Going for Python pip update${nocolor}"
+            python3 -m pip install -U pip
+            print_chars "-"
+        fi
+
         echo -e "${green}\n✅ Going for auto clean${nocolor}"
         apt autoclean -y
         print_chars "-"
