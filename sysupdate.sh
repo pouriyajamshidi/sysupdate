@@ -142,9 +142,7 @@ function main() {
     is_root
     distro=$(check_distro)
 
-    if [[ "$distro" == "debian" || "$distro" == "ubuntu" || \
-        "$distro" == "linuxmint" || "$distro" == "raspbian" ]]; then
-
+    if [[ -f "/etc/debian_version" ]]; then
         update_Debian
 
     elif [[ "$distro" == "fedora" || "$distro" == "centos" || \
