@@ -92,7 +92,7 @@ function update_Debian() {
         apt dist-upgrade -y
         print_chars "-"
 
-        if dpkg -s snap >/dev/null 2>&1; then
+        if dpkg -s snapd >/dev/null 2>&1; then
             echo "${green}✅ Going for Snap refresh${nocolor}"
             snap refresh
             print_chars "-"
@@ -145,7 +145,7 @@ function main() {
     if [[ -f "/etc/debian_version" ]]; then
         update_Debian
 
-    elif [[ "$distro" == "fedora" || "$distro" == "centos" || \
+    elif [[ "$distro" == "fedora" || "$distro" == "centos" ||
         "$distro" == "ol" || "$distro" == "rhel" ]]; then
 
         update_RPM
