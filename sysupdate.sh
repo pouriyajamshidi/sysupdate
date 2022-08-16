@@ -110,6 +110,30 @@ function update_Debian() {
             print_chars "-"
         fi
 
+        echo -e "${green}\n[+] Going Nim dev update\n${nocolor}"
+        su pouriya -c "/home/pouriya/.nimble/bin/choosenim update devel"
+        print_chars "-"
+
+        echo -e "${green}\n[+] Going Nim stable update\n${nocolor}"
+        su pouriya -c "/home/pouriya/.nimble/bin/choosenim update stable"
+        print_chars "-"
+
+        echo -e "${green}\n[+] Going Choosenim update\n${nocolor}"
+        su pouriya -c "/home/pouriya/.nimble/bin/choosenim update self"
+        print_chars "-"
+
+        echo -e "${green}\n[+] Going for V update\n${nocolor}"
+        su pouriya -c "v up"
+        print_chars "-"
+
+        echo -e "${green}\n[+] Going for Rust update\n${nocolor}"
+        su pouriya -c "/home/pouriya/.cargo/bin/rustup update"
+        print_chars "-"
+
+        echo -e "${green}\n[+] Going for pip update\n${nocolor}"
+        su pouriya -c "python3 -m pip install -U pip"
+        print_chars "-"
+
         echo -e "${green}\n✅ Going for auto clean${nocolor}"
         apt autoclean -y
         print_chars "-"
