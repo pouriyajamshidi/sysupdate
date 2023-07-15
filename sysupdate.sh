@@ -110,19 +110,19 @@ function update_Debian() {
             print_chars "-"
         fi
 
-        echo -e "${green}\n✅ Going Nim dev update\n${nocolor}"
+        echo -e "${green}\n✅ Going for Nim dev update\n${nocolor}"
         su pouriya -c "/home/pouriya/.nimble/bin/choosenim update devel"
         print_chars "-"
 
-        echo -e "${green}\n✅ Going Nim stable update\n${nocolor}"
+        echo -e "${green}\n✅ Going for Nim stable update\n${nocolor}"
         su pouriya -c "/home/pouriya/.nimble/bin/choosenim update stable"
         print_chars "-"
 
-        echo -e "${green}\n✅ Going Choosenim update\n${nocolor}"
+        echo -e "${green}\n✅ Going for Choosenim update\n${nocolor}"
         su pouriya -c "/home/pouriya/.nimble/bin/choosenim update self"
         print_chars "-"
 
-        echo -e "${green}\n✅ Going Nimble update\n${nocolor}"
+        echo -e "${green}\n✅ Going for Nimble update\n${nocolor}"
         su pouriya -c "/home/pouriya/.nimble/bin/nimble install nimble"
         print_chars "-"
 
