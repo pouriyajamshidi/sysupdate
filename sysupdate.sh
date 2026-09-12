@@ -17,6 +17,9 @@ else
 fi
 
 failures=0
+user_bin=""
+clean_docker=0
+clean_docker_volumes=0
 
 have() {
     command -v "$1" >/dev/null 2>&1
@@ -49,10 +52,14 @@ Usage: sudo sysupdate [options]
 Updates the system packages, then removes the leftovers they keep behind.
 
 Options:
-  -u, --user USER  also update USER's own toolchains: rustup, choosenim,
-                   nimble, v and pipx (default: $SUDO_USER)
-  -n, --no-user    system packages only
-  -h, --help       show this help
+  -u, --user USER   also update USER's own toolchains: rustup, choosenim,
+                    nimble and v (default: $SUDO_USER)
+  -n, --no-user     system packages only
+  -d, --docker      prune stopped containers, dangling images, unused
+                    networks and the build cache
+      --docker-volumes
+                    the above, plus unused anonymous volumes
+  -h, --help        show this help
 
 Environment:
   SYSUPDATE_LOG           log file (default: /var/log/sysupdate.txt)
@@ -135,12 +142,16 @@ update_extras() {
     fi
 }
 
+user_run() {
+    su - "$TARGET_USER" -c "export PATH=\"$user_bin:\$PATH\"; $1"
+}
+
 update_user_tool() {
     local tool=$1 command=$2
 
-    su - "$TARGET_USER" -c "command -v $tool" >/dev/null 2>&1 || return 0
+    user_run "command -v $tool" >/dev/null 2>&1 || return 0
 
-    step "$TARGET_USER: $command" su - "$TARGET_USER" -c "$command"
+    step "$TARGET_USER: $command" user_run "$command"
 }
 
 update_user_tools() {
@@ -148,11 +159,16 @@ update_user_tools() {
         return 0
     fi
 
-    if ! id "$TARGET_USER" >/dev/null 2>&1; then
+    local home
+    home=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+
+    if [[ -z $home ]]; then
         warn "no such user: $TARGET_USER"
         failures=$((failures + 1))
         return 0
     fi
+
+    user_bin="$home/.nimble/bin:$home/.cargo/bin:$home/.local/bin"
 
     update_user_tool rustup "rustup update"
     update_user_tool choosenim "choosenim update stable"
@@ -160,7 +176,29 @@ update_user_tools() {
     update_user_tool choosenim "choosenim update self"
     update_user_tool nimble "nimble -y install nimble"
     update_user_tool v "v up"
-    update_user_tool pipx "pipx upgrade-all"
+}
+
+prune_docker() {
+    if ! have docker; then
+        warn "docker is not installed"
+        failures=$((failures + 1))
+        return 0
+    fi
+
+    if ! docker info >/dev/null 2>&1; then
+        warn "docker is not running"
+        failures=$((failures + 1))
+        return 0
+    fi
+
+    step "Removing stopped containers" docker container prune -f
+    step "Removing dangling images" docker image prune -f
+    step "Removing unused networks" docker network prune -f
+    step "Trimming the build cache" docker builder prune -f
+
+    if ((clean_docker_volumes)); then
+        step "Removing unused anonymous volumes" docker volume prune -f
+    fi
 }
 
 reboot_required() {
@@ -189,6 +227,10 @@ run() {
     update_extras
     update_user_tools
 
+    if ((clean_docker)); then
+        prune_docker
+    fi
+
     if reboot_required; then
         warn "A reboot is required"
     fi
@@ -216,6 +258,15 @@ main() {
             ;;
         -n | --no-user)
             TARGET_USER=""
+            shift
+            ;;
+        -d | --docker)
+            clean_docker=1
+            shift
+            ;;
+        --docker-volumes)
+            clean_docker=1
+            clean_docker_volumes=1
             shift
             ;;
         -h | --help)

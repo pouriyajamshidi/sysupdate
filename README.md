@@ -36,9 +36,13 @@ You can also make a `cron` job to run it at the time of your liking:
 ## Configuration
 
 ```text
-  -u, --user USER  also update USER's own toolchains (default: $SUDO_USER)
-  -n, --no-user    system packages only
-  -h, --help       show this help
+  -u, --user USER   also update USER's own toolchains (default: $SUDO_USER)
+  -n, --no-user     system packages only
+  -d, --docker      prune stopped containers, dangling images, unused
+                    networks and the build cache
+      --docker-volumes
+                    the above, plus unused anonymous volumes
+  -h, --help        show this help
 ```
 
 The rest is controlled through environment variables:
@@ -49,11 +53,19 @@ The rest is controlled through environment variables:
 | `SYSUPDATE_USER` | `$SUDO_USER` | Same as `--user` |
 | `SYSUPDATE_JOURNAL_KEEP` | `14d` | How much systemd journal to keep |
 
-`--user` covers the toolchains that live in a home directory rather than in the system package manager. Each one is only touched if that user actually has it: `rustup`, `choosenim` (stable, devel and itself), `nimble`, `v` and `pipx`. Running `sudo sysupdate` already picks up `$SUDO_USER`, so the flag is mostly for `cron`. Use `--no-user` to stay out of home directories entirely:
+`--user` covers the toolchains that live in a home directory rather than in the system package manager. Each one is only touched if that user actually has it: `rustup`, `choosenim` (stable, devel and itself), `nimble` and `v`. Running `sudo sysupdate` already picks up `$SUDO_USER`, so the flag is mostly for `cron`. Use `--no-user` to stay out of home directories entirely:
 
 ```bash
 sudo sysupdate --no-user
 ```
+
+Docker cleanup is opt-in, because unlike the rest of the script it can throw away something you still want:
+
+```bash
+sudo sysupdate --docker
+```
+
+`--docker` only removes what Docker itself considers reclaimable: stopped containers, dangling images, unused networks and the build cache. Volumes are behind their own flag since that is where data lives — `--docker-volumes` prunes unused *anonymous* volumes and leaves named ones alone. Note that Docker older than 23.0 also removed named volumes with that same command, so check your version before using it on an old host.
 
 ## What it does
 
@@ -63,6 +75,7 @@ sudo sysupdate --no-user
 | Fedora, RHEL, CentOS, Oracle | `dnf`/`yum upgrade --refresh` | `autoremove`, `clean all` |
 | Arch | `pacman -Syu` | orphan removal, `paccache -rk1` |
 | Any | `snap refresh`, `flatpak update` | disabled snap revisions, unused Flatpak runtimes, journal trim |
+| Docker (opt-in) | - | stopped containers, dangling images, unused networks, build cache, anonymous volumes |
 
 If a reboot is required afterwards, it says so.
 
