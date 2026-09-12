@@ -44,14 +44,19 @@ step() {
 
 usage() {
     cat <<'EOF'
-Usage: sudo sysupdate
+Usage: sudo sysupdate [options]
 
 Updates the system packages, then removes the leftovers they keep behind.
 
+Options:
+  -u, --user USER  also update USER's own toolchains: rustup, choosenim,
+                   nimble, v and pipx (default: $SUDO_USER)
+  -n, --no-user    system packages only
+  -h, --help       show this help
+
 Environment:
   SYSUPDATE_LOG           log file (default: /var/log/sysupdate.txt)
-  SYSUPDATE_USER          user whose toolchains (rustup, choosenim, nimble, v,
-                          pipx) are updated too (default: $SUDO_USER)
+  SYSUPDATE_USER          same as --user
   SYSUPDATE_JOURNAL_KEEP  how much systemd journal to keep (default: 14d)
 EOF
 }
@@ -135,16 +140,24 @@ update_user_tool() {
 
     su - "$TARGET_USER" -c "command -v $tool" >/dev/null 2>&1 || return 0
 
-    step "Updating $tool for $TARGET_USER" su - "$TARGET_USER" -c "$command"
+    step "$TARGET_USER: $command" su - "$TARGET_USER" -c "$command"
 }
 
 update_user_tools() {
-    if [[ -z $TARGET_USER ]] || ! id "$TARGET_USER" >/dev/null 2>&1; then
+    if [[ -z $TARGET_USER ]]; then
+        return 0
+    fi
+
+    if ! id "$TARGET_USER" >/dev/null 2>&1; then
+        warn "no such user: $TARGET_USER"
+        failures=$((failures + 1))
         return 0
     fi
 
     update_user_tool rustup "rustup update"
-    update_user_tool choosenim "choosenim update stable && choosenim update self"
+    update_user_tool choosenim "choosenim update stable"
+    update_user_tool choosenim "choosenim update devel"
+    update_user_tool choosenim "choosenim update self"
     update_user_tool nimble "nimble -y install nimble"
     update_user_tool v "v up"
     update_user_tool pipx "pipx upgrade-all"
@@ -191,10 +204,31 @@ run() {
 }
 
 main() {
-    if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
-        usage
-        exit 0
-    fi
+    while (($#)); do
+        case $1 in
+        -u | --user)
+            if [[ -z ${2:-} ]]; then
+                echo "$1 needs a user name" >&2
+                exit 1
+            fi
+            TARGET_USER=$2
+            shift 2
+            ;;
+        -n | --no-user)
+            TARGET_USER=""
+            shift
+            ;;
+        -h | --help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "unknown option: $1" >&2
+            usage >&2
+            exit 1
+            ;;
+        esac
+    done
 
     if ((EUID != 0)); then
         echo "sysupdate must be run as root" >&2
