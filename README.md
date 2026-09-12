@@ -9,7 +9,7 @@ This script has been running on over a dozen different servers and workstations 
 ## Quick install
 
 ```bash
-sudo curl -fsSL https://raw.githubusercontent.com/pouriyajamshidi/sysupdate/master/sysupdate.sh -o /usr/local/bin/sysupdate
+sudo curl -fsSL https://raw.githubusercontent.com/pouriyajamshidi/sysupdate/master/sysupdate.sh -o /usr/local/bin/sysupdate && \
 sudo chmod +x /usr/local/bin/sysupdate
 ```
 
