@@ -171,8 +171,8 @@ update_user_tools() {
     user_bin="$home/.nimble/bin:$home/.cargo/bin:$home/.local/bin"
 
     update_user_tool rustup "rustup update"
-    update_user_tool choosenim "choosenim update stable"
     update_user_tool choosenim "choosenim update devel"
+    update_user_tool choosenim "choosenim update stable"
     update_user_tool choosenim "choosenim update self"
     update_user_tool nimble "nimble -y install nimble"
     update_user_tool v "v up"
