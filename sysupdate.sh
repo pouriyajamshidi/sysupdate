@@ -202,8 +202,17 @@ prune_docker() {
 }
 
 reboot_required() {
-    [[ -f /var/run/reboot-required ]] ||
-        { have needs-restarting && ! needs-restarting -r >/dev/null 2>&1; }
+    if [[ -f /var/run/reboot-required ]]; then
+        return 0
+    fi
+
+    if have needs-restarting; then
+        ! needs-restarting -r >/dev/null 2>&1
+    elif have dnf5 && dnf5 needs-restarting --help >/dev/null 2>&1; then
+        ! dnf5 needs-restarting -r >/dev/null 2>&1
+    else
+        return 1
+    fi
 }
 
 run() {
