@@ -104,7 +104,7 @@ core22 revision 1033 removed
 Vacuuming done, freed 1.1G of archived journals
 
 ==> yourname: rustup update
-info: cleaning up downloads & tmp directories
+...
 
 [!] A reboot is required
 
