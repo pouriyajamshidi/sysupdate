@@ -301,7 +301,7 @@ main() {
 
     mkdir -p "$(dirname "$LOG_FILE")"
 
-    run 2>&1 | tee >(sed -u 's/\x1b\[[0-9;]*m//g' >>"$LOG_FILE")
+    run 2>&1 | tee >(sed -u 's/\x1b\[[0-9;]*m//g; s/\x1b(B//g' >>"$LOG_FILE")
     exit "${PIPESTATUS[0]}"
 }
 
