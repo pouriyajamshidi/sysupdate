@@ -2,6 +2,9 @@
 
 set -uo pipefail
 
+# The date of the last change, bump it with every change
+VERSION=2026.10.31
+
 LOG_FILE=${SYSUPDATE_LOG:-/var/log/sysupdate.txt}
 JOURNAL_KEEP=${SYSUPDATE_JOURNAL_KEEP:-14d}
 TARGET_USER=${SYSUPDATE_USER:-${SUDO_USER:-}}
@@ -59,6 +62,7 @@ Options:
                     networks and the build cache
       --docker-volumes
                     the above, plus unused anonymous volumes
+  -v, --version     show the version
   -h, --help        show this help
 
 Environment:
@@ -312,6 +316,10 @@ main() {
             clean_docker=1
             clean_docker_volumes=1
             shift
+            ;;
+        -v | --version)
+            echo "sysupdate $VERSION"
+            exit 0
             ;;
         -h | --help)
             usage

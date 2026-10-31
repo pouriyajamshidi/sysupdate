@@ -42,6 +42,7 @@ You can also make a `cron` job to run it at the time of your liking:
                     networks and the build cache
       --docker-volumes
                     the above, plus unused anonymous volumes
+  -v, --version     show the version
   -h, --help        show this help
 ```
 
