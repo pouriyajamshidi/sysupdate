@@ -77,7 +77,7 @@ sudo sysupdate --docker
 | Any | `snap refresh`, `flatpak update` | disabled snap revisions, unused Flatpak runtimes, journal trim |
 | Docker (opt-in) | - | stopped containers, dangling images, unused networks, build cache, anonymous volumes |
 
-If a reboot is required afterwards, it says so.
+If a reboot is required afterwards, it says so. If DKMS is installed, it also checks that every DKMS module (such as the NVIDIA driver) is built for the newest kernel, so you find out before rebooting instead of after.
 
 ## What a run looks like
 

@@ -205,6 +205,33 @@ prune_docker() {
     fi
 }
 
+# Kernel modules like the NVIDIA driver are built by DKMS for each kernel.
+# If one did not build for the newest kernel, booting it can leave you
+# without that driver, so say so before the reboot rather than after.
+# shellcheck disable=SC2329 # called through step
+check_dkms() {
+    local kernels=(/lib/modules/*) kernel status module missing=()
+
+    kernel=$(printf '%s\n' "${kernels[@]##*/}" | sort -V | tail -n 1)
+    status=$(dkms status)
+
+    # Lines look like "nvidia/580.95, 6.8.0-45-generic, x86_64: installed"
+    # (older dkms: "nvidia, 580.95, ...")
+    while read -r module; do
+        if ! grep -F ", $kernel," <<<"$status" | grep -E "^${module}[/,]" | grep -q ': installed'; then
+            missing+=("$module")
+        fi
+    done < <(awk -F'[/,]' 'NF {print $1}' <<<"$status" | sort -u)
+
+    if ((${#missing[@]})); then
+        echo "Not built for kernel $kernel: ${missing[*]}"
+        echo "Do not reboot until this is fixed, see: dkms status"
+        return 1
+    fi
+
+    echo "All DKMS modules are built for kernel $kernel"
+}
+
 reboot_required() {
     if [[ -f /var/run/reboot-required ]]; then
         return 0
@@ -242,6 +269,10 @@ run() {
 
     if ((clean_docker)); then
         prune_docker
+    fi
+
+    if have dkms; then
+        step "Checking DKMS modules" check_dkms
     fi
 
     if reboot_required; then
