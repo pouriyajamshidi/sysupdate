@@ -72,7 +72,11 @@ update_debian() {
     export DEBIAN_FRONTEND=noninteractive
 
     step "Refreshing package lists" apt-get update
-    step "Upgrading packages" apt-get full-upgrade -y
+    # Keep our own version of a changed config file instead of asking,
+    # the new one is saved next to it as .dpkg-dist
+    step "Upgrading packages" apt-get full-upgrade -y \
+        -o Dpkg::Options::=--force-confdef \
+        -o Dpkg::Options::=--force-confold
     step "Removing unused packages" apt-get autoremove --purge -y
     step "Cleaning the package cache" apt-get autoclean -y
 
